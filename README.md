@@ -51,6 +51,8 @@ Open [http://localhost:3000](http://localhost:3000). Because Web Audio requires 
 | `npm run build`| Production build         |
 | `npm run start`| Serve production build   |
 | `npm run lint` | ESLint (Next.js config)  |
+| `npm run test` | Vitest (watch mode)       |
+| `npm run test:run` | Vitest single run   |
 
 ## Project layout
 
@@ -62,6 +64,8 @@ Open [http://localhost:3000](http://localhost:3000). Because Web Audio requires 
 | `components/Controls.tsx` | Shared slider components |
 | `hooks/useAudioEngine.ts` | Tone.js voices, transport, scheduling |
 | `store/useStore.ts` | Sequencer state, persistence, actions |
+| `tests/setup.ts` | Vitest + RTL setup, Web Audio stub, Tone mocks |
+| `*.test.ts(x)` | Vitest specs (store, UI, audio hook) |
 
 The audio hook reads the latest pattern and channel parameters from the store (via refs) inside the transport callback so the sequence stays in sync with the UI without stale closures.
 

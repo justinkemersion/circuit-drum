@@ -29,7 +29,7 @@ export type Pattern = Record<InstrumentId, boolean[]>;
 
 const STEPS = 16;
 
-function emptyPattern(): Pattern {
+export function emptyPattern(): Pattern {
   return {
     kick: Array(STEPS).fill(false),
     snare: Array(STEPS).fill(false),
@@ -43,13 +43,26 @@ function defaultChannelParams(): ChannelParams {
   return { pitch: 0.5, decay: 0.45, volume: 0.75 };
 }
 
-export type CircuitState = {
+export function defaultChannels(): Record<InstrumentId, ChannelParams> {
+  return {
+    kick: defaultChannelParams(),
+    snare: defaultChannelParams(),
+    closedHat: { pitch: 0.65, decay: 0.25, volume: 0.55 },
+    openHat: { pitch: 0.55, decay: 0.72, volume: 0.5 },
+    clap: defaultChannelParams(),
+  };
+}
+
+export type CircuitStateSlice = {
   bpm: number;
   masterVolume: number;
   isPlaying: boolean;
   playheadStep: number;
   pattern: Pattern;
   channels: Record<InstrumentId, ChannelParams>;
+};
+
+export type CircuitState = CircuitStateSlice & {
   setBpm: (bpm: number) => void;
   setMasterVolume: (v: number) => void;
   setPlaying: (playing: boolean) => void;
@@ -60,23 +73,26 @@ export type CircuitState = {
     key: keyof ChannelParams,
     value: number,
   ) => void;
+  clearPattern: () => void;
+  resetSequencer: () => void;
 };
+
+/** Serializable defaults for tests and store reset (excludes actions). */
+export function createDefaultStateSlice(): CircuitStateSlice {
+  return {
+    bpm: 120,
+    masterVolume: 0.8,
+    isPlaying: false,
+    playheadStep: -1,
+    pattern: emptyPattern(),
+    channels: defaultChannels(),
+  };
+}
 
 export const useStore = create<CircuitState>()(
   persist(
     (set) => ({
-      bpm: 120,
-      masterVolume: 0.8,
-      isPlaying: false,
-      playheadStep: -1,
-      pattern: emptyPattern(),
-      channels: {
-        kick: defaultChannelParams(),
-        snare: defaultChannelParams(),
-        closedHat: { pitch: 0.65, decay: 0.25, volume: 0.55 },
-        openHat: { pitch: 0.55, decay: 0.72, volume: 0.5 },
-        clap: defaultChannelParams(),
-      },
+      ...createDefaultStateSlice(),
       setBpm: (bpm) => set({ bpm: Math.min(200, Math.max(30, Math.round(bpm))) }),
       setMasterVolume: (masterVolume) =>
         set({ masterVolume: Math.min(1, Math.max(0, masterVolume)) }),
@@ -98,6 +114,13 @@ export const useStore = create<CircuitState>()(
             },
           },
         })),
+      clearPattern: () => set({ pattern: emptyPattern() }),
+      resetSequencer: () =>
+        set({
+          pattern: emptyPattern(),
+          isPlaying: false,
+          playheadStep: -1,
+        }),
     }),
     {
       name: "circuit-drum-state",

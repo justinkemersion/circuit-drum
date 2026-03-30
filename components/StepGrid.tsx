@@ -35,6 +35,7 @@ export function StepGrid() {
             {Array.from({ length: STEPS }, (_, step) => (
               <StepButton
                 key={step}
+                label={`${INSTRUMENT_LABELS[inst]} step ${step + 1}`}
                 active={pattern[inst][step]}
                 isPlayhead={playheadStep === step}
                 onToggle={() => toggleStep(inst, step)}
@@ -48,10 +49,12 @@ export function StepGrid() {
 }
 
 function StepButton({
+  label,
   active,
   isPlayhead,
   onToggle,
 }: {
+  label: string;
   active: boolean;
   isPlayhead: boolean;
   onToggle: () => void;
@@ -59,6 +62,7 @@ function StepButton({
   return (
     <button
       type="button"
+      aria-label={label}
       onClick={onToggle}
       className={[
         "relative aspect-square w-full min-h-[1.75rem] max-h-10 rounded-md border transition-all duration-150 sm:min-h-8",

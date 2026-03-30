@@ -66,6 +66,7 @@ export function DrumMachine() {
             <div className="flex flex-1 flex-wrap items-end gap-3 sm:gap-4">
               <button
                 type="button"
+                aria-label={isPlaying ? "Stop playback" : "Start playback"}
                 onClick={() => void toggleTransport()}
                 className="flex h-11 min-w-[6.5rem] items-center justify-center gap-2 rounded-md border border-emerald-600/50 bg-gradient-to-b from-emerald-900/40 to-zinc-950 px-4 text-sm uppercase tracking-widest text-emerald-300 shadow-[0_0_20px_rgba(34,197,94,0.15)] transition hover:border-emerald-400/70 hover:text-emerald-200 active:scale-[0.98]"
               >
